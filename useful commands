@@ -1,0 +1,21 @@
+
+##Find containers disk size
+find /var/lib/docker/containers/ -name "*.log" -exec ls -sh {} \; | sort -n -r | head -50
+
+## Sort containers by Memory usage
+docker stats --no-stream --format "table {{.Name}}\t{{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}" | sort -k 4 -h
+
+# Remove Dead and Exited containers.
+docker rm $(docker ps -a | grep "Dead\|Exited" | awk '{print $1}'); true
+
+# It will fail to remove images currently in use.
+docker rmi $(docker images -qf dangling=true); true
+
+# Clean up containers that are Created/Exited/Dead
+docker ps -a | egrep -i '(exited|created|dead)' | egrep -v '(CONTAINER|ucp-|dtr-)' | awk '{print $1}' | xargs docker rm
+
+## Attach volume to existing service
+docker service update \
+    --mount-add \
+      type=volume,volume-driver=driver_name,source=other-volume,target=/somewhere-else \
+    myservice
