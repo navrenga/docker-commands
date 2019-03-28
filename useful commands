@@ -19,3 +19,6 @@ docker service update \
     --mount-add \
       type=volume,volume-driver=driver_name,source=other-volume,target=/somewhere-else \
     myservice
+    
+## Clean container logs
+truncate -s 0 /var/lib/docker/containers/*/*-json.log
