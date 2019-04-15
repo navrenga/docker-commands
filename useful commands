@@ -22,3 +22,11 @@ docker service update \
     
 ## Clean container logs
 truncate -s 0 /var/lib/docker/containers/*/*-json.log
+
+
+## Mem usage sorted
+docker stats --no-stream --format "table {{.Name}}\t{{.Container}}\t{{.MemUsage}}" | sort -k 3 -h
+
+## CPU usage sorted
+docker stats --no-stream --format "table {{.Name}}\t{{.Container}}\t{{.CPUPerc}}" | sort -k 3 -h
+
