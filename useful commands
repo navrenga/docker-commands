@@ -1,35 +1,35 @@
 
-##Find containers disk size
+**##Find containers disk size**
 find /var/lib/docker/containers/ -name "*.log" -exec ls -sh {} \; | sort -n -r | head -50
 
-## Sort containers by Memory usage
+**## Sort containers by Memory usage**
 docker stats --no-stream --format "table {{.Name}}\t{{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}" | sort -k 4 -h
 
-# Remove Dead and Exited containers.
+**# Remove Dead and Exited containers.**
 docker rm $(docker ps -a | grep "Dead\|Exited" | awk '{print $1}'); true
 
-# It will fail to remove images currently in use.
+**# It will fail to remove images currently in use.**
 docker rmi $(docker images -qf dangling=true); true
 
-# Clean up containers that are Created/Exited/Dead
+**# Clean up containers that are Created/Exited/Dead**
 docker ps -a | egrep -i '(exited|created|dead)' | egrep -v '(CONTAINER|ucp-|dtr-)' | awk '{print $1}' | xargs docker rm
 
-## Attach volume to existing service
+**## Attach volume to existing service**
 docker service update \
     --mount-add \
       type=volume,volume-driver=driver_name,source=other-volume,target=/somewhere-else \
     myservice
     
-## Clean container logs
+**## Clean container logs**
 truncate -s 0 /var/lib/docker/containers/*/*-json.log
 
 
-## Mem usage sorted
+**## Mem usage sorted**
 docker stats --no-stream --format "table {{.Name}}\t{{.Container}}\t{{.MemUsage}}" | sort -k 3 -h
 
-## CPU usage sorted
+**## CPU usage sorted**
 docker stats --no-stream --format "table {{.Name}}\t{{.Container}}\t{{.CPUPerc}}" | sort -k 3 -h
 
-##Docker Service Balance
+**##Docker Service Balance**
 docker service ls --filter name=service_name -q > service_list && for i in `cat service_list`; do docker service update "$i" --detach=false --force ; done (edited)
 
