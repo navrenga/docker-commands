@@ -33,3 +33,6 @@ docker stats --no-stream --format "table {{.Name}}\t{{.Container}}\t{{.CPUPerc}}
 **##Docker Service Balance**
 docker service ls --filter name=service_name -q > service_list && for i in `cat service_list`; do docker service update "$i" --detach=false --force ; done (edited)
 
+
+##Find the IPs for the nodes in Swarm
+for NODE in $(docker node ls --format '{{.Hostname}}'); do echo -e "${NODE} - $(docker node inspect --format '{{.Status.Addr}}' "${NODE}")"; done
